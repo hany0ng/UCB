@@ -1,0 +1,66 @@
+TAR
+-Stripping Components
+    Exercise 2
+        # Extract Movies: 
+            tar -xf TarDocs.tar --strip=1 TarDocs/Movies
+        # Extract Movies/ZOE_0004.mp4: 
+            tar -xf TarDocs.tar --strip=2 TarDocs/Movies/ZOE_0004.mp4
+
+-Modifying Archives
+    Exercise 1
+        # Insert the solution commands for Exercise 1 below
+            cp sample.tar update.tar
+            tar tf update.tar
+            touch test1.txt test2.txt
+            tar rvf update.tar test1.txt test2.txt
+            tar tf update.tar
+
+    Exercise 2
+        # Insert the solution commands for Exercise 2 below
+            nano test2.txt (#to update file)
+            tar uvf update.tar test2.txt
+            tar tf update.tar
+            #Both latest copy and old copy are in archive.
+
+    Exercise 3
+        # Insert the solution commands for Exercise 3 below
+            tar -f update.tar --delete test1.txt
+            tar tf update.tar
+
+-Incremental Backups
+    Exercise 1
+        # A snapshot file is :
+            a file created from incremenetal backup that is used to determine which files were modified since the last backup so that the next incremenetal backup will contain only modified files.
+        # A backup level is :
+            an incremental backup since the last level # backup.  A level 1 backup includes only files changed since last full backup (or level 0 backup).  A level 2 backup includes only files changed since last level 1 backup, and so on.
+        # A level 0 backup :
+            a full backup of specified directories, serving as a baseline for which additional backup levels can be derived off of.  In order to force level 0 backups should a snapshot file exist, the snapshot file must first be removed or run tar with the "--level=0" option.
+
+    Exercise 2
+        # Insert the solution commands for Exercise 2 below
+            sudo tar cvf archive.1.tar -g /var/log/home.snar /home/student
+            touch new_file.1 new_file.2
+            sudo cp /var/log/home.snar /var/log/home.snar-1
+            sudo tar --create --file=archive.2.tar --listed-incremenetal=/var/log/home.snar /home
+            tar tf archive.2.tar
+            sudo cat /var/log/home.snar
+
+CRON
+-Managing cron
+    #Part 1
+        */2 * * * * echo "Google" >> google.txt >/dev/null 2>&1
+        * 17 * * * tar -cvzf document-backup.tar.gz ~/Documents >/dev/null 2>&1
+        * 17 * * 5 tar -cvjf pictures-backup.tar.bz2 ~/Pictures >/dev/null 2>&1
+
+    #Part 2
+        (cd ~/data/cron/Documents && tar cvf ~/data/cron/cronjob.tar $(find . -type f -iname "*.txt"))
+        mkdir -p ~/data/cron/exercises && tar xvf ~/data/cron/cronjob.tar -C ~/data/cron/exercises
+    
+            ##Ask Aaron how to use -C with find to compress
+            ##Didn't work - tar cvf ~/data/cron/cronjob.tar -C ~/data/cron/Documents $(find ~/data/cron/Documents -type f -iname "*.txt")
+    
+            #Could also do below, but it compresses files with whole directory structure so you would have to strip-components in untar
+            #tar cvf ~/data/cron/cronjob.tar $(find ~/data/cron/Documents -type f -iname "*.txt") && mkdir -p ~/data/cron/exercises && tar xvf ~/data/cron/cronjob.tar --strip-components=5 -C ~/data/cron/exercises
+    
+    Part 4: Disable and Backup
+        */2 * * * TUE,THU,SAT (cd ~/data/cron/Documents && tar cvf ~/data/cron/cronjob.tar $(find . -type f -iname "*.txt")) && mkdir -p ~/data/cron/exercises && tar xvf ~/data/cron/cronjob.tar -C ~/data/cron/exercises >/dev/null 2>&1

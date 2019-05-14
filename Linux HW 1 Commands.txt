@@ -1,0 +1,67 @@
+# Part I: Users and Groups COMMANDS
+	adduser --force-badname Andy
+	adduser --force-badname Ollie
+	adduser --force-badname Tina
+	adduser --force-badname Louise
+	adduser --force-badname Gene
+	adduser --force-badname Jimmy
+	adduser --force-badname Teddy
+	groupadd -g 12345 students
+	groupadd -g 54321 teachers
+	usermod -aG students Andy
+	usermod -aG students Ollie
+	usermod -aG students Gene
+	usermod -aG students Jimmy
+	usermod -aG students Teddy
+	usermod -aG teachers Tina
+	usermod -aG teachers Louise
+	usermod -aG teachers Ollie
+	usermod -aG sudo Teddy
+	usermod -aG sudo Louise
+	usermod -aG adm Teddy
+	usermod -aG adm Louise
+	cut -d: -f1 /etc/passwd | xargs groups
+
+# Part II: Restricting Sudo Access COMMANDS
+	visudo
+		%Teddy ALL=(ALL) /usr/bin/apt
+		%Louise ALL=(ALL) /usr/bin/apt
+		#commented out sudo privileges to execute all commands.
+
+# Part III: Logging Sudo Access Attempts COMMANDS
+	service rsyslog start
+	su Louise
+	sudo apt update (failed intentionally 3 times, then successfully inputted passwd)
+	sudo cat /etc/passwd (returned message that user Louise not allowed to execute command)
+	su Teddy
+	sudo apt update (failed intentionally 3 times, then successfully inputted passwd)
+	sudo cat /etc/passwd (returned message that user Teddy not allowed to execute command)
+	su root
+	cat /var/log/auth.log | grep "sudo"
+		- can see both "sudo apt update" and "sudo cat /etc/passwd" commands
+
+# Part IV: Customizing User Directories COMMANDS
+	sudo -u Andy mkdir /home/Andy/Documents /home/Andy/Downloads /home/Andy/Pictures /home/Andy/Videos
+	sudo -u Ollie mkdir /home/Ollie/Documents /home/Ollie/Downloads /home/Ollie/Pictures /home/Ollie/Videos
+	sudo -u Tina mkdir /home/Tina/Documents /home/Tina/Downloads /home/Tina/Pictures /home/Tina/Videos
+	sudo -u Louise /home/Louise/Documents /home/Louise/Downloads /home/Louise/Pictures /home/Louise/Videos
+	sudo -u Gene /home/Gene/Documents /home/Gene/Downloads /home/Gene/Pictures /home/Gene/Videos
+	sudo -u Jimmy /home/Jimmy/Documents /home/Jimmy/Downloads /home/Jimmy/Pictures /home/Jimmy/Videos
+	sudo -u Teddy /home/Teddy/Documents /home/Teddy/Downloads /home/Teddy/Pictures /home/Teddy/Videos
+
+	chmod -R 740 /home/Andy
+	chmod -R 740 /home/Ollie
+	chmod -R 740 /home/Tina
+	chmod -R 740 /home/Louise
+	chmod -R 740 /home/Gene
+	chmod -R 740 /home/Jimmy
+	chmod -R 740 /home/Teddy
+
+	su Teddy
+	ls /home/Jimmy
+
+	ls -a /etc/skel
+	cd /etc/skel
+	mkdir Documents Downloads Pictures Videos
+	adduser --force-badname Han
+	ls /home/Han
